@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${sectionName}"></title>
+<!--    <head th:insert="~{import :: head}"></head>-->
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../static/css/community.css"/>
+    <link rel="stylesheet" href="../static/css/jquery.pagination.css"/>
+    <script src="../static/js/jquery-3.4.1.min.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery.pagination.js"></script>
+</head>
+<body>
+<div th:insert="~{navigation :: nav}"></div>
+<div class="container-fluid main profile">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+            <h2><span th:text="${sectionName}"></span></h2>
+            <hr>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'questions'}">
+                <div class="media" th:each="question : ${questions}">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object img-rounded"
+                                 th:src="${question.user.avatarUrl}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            <a th:href="@{'/question/'+ ${question.id}}" th:text="${question.title}"></a>
+                        </h4>
+                        <span class="text-desc">
+                        <span th:text="${question.commentCount}"></span> 个回复 • <span
+                                th:text="${question.viewCount}"></span> 次浏览 • <span
+                                th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span> •
+                        <a th:href="@{'/publish/'+${question.id}}" class="community-menu"
+                           th:if="${session.user != null && session.user.id == question.creator}">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span>
+                    </a>
+                    </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}">
+                <div class="media" th:each="notification : ${notifications}">
+                    <div class="media-body">
+                        <p class="media-heading">
+                            <span th:text="${notification.notifierName +' ' + notification.typeName + ' '}"></span>
+                            <a th:href="@{'/notification/'+ ${notification.id}}"
+                               th:text="${notification.outerTitle}">
+                            </a>
+                            <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <tr>
+                    <td colspan="6" align="center">
+                        <div class="meneame" id="Pagination"></div>
+                    </td>
+                </tr>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <div class="list-group section">
+                <a href="/profile/questions"
+                   th:class="${section == 'questions'}? 'active list-group-item' : 'list-group-item'">我的问题</a>
+                <a href="/profile/replies"
+                   th:class="${section == 'replies'}? 'active list-group-item' : 'list-group-item'">
+                    最新回复
+                    <span class="badge" th:text="${session.unreadCount}"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:insert="~{footer :: foot}"></div>
+<script>
+
+    $(function () {
+        initPagination();
+    });
+
+    function initPagination(){
+        var totalpage = "[[${total}]]";
+        totalpage = parseInt(totalpage);
+        var currentPage ="[[${page}]]";
+        currentPage=parseInt(currentPage)-1;
+        var paginationProperties = {
+            num_edge_entries: 1,    //边缘页数
+            num_display_entries: 4,   //主题页数
+            callback:pageselectCallback,  //回调函数
+            items_per_page:5,              //每页显示条数
+            current_page: currentPage,
+            prev_text: "上一页",
+            next_text: "下一页"
+        };
+        //显示分页导航条
+        $("#Pagination").pagination(totalpage,paginationProperties)
+    }
+
+    function pageselectCallback(pageIndex,jq){
+        var currentPage = parseInt(pageIndex)+1;
+        var section = "[[${section}]]";
+        window.location.href="/profile/"+section+"?page="+currentPage+"&pageSize="+5;
+        return false;
+    }
+</script>
+</body>
+</html>

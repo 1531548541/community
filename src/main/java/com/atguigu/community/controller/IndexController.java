@@ -30,7 +30,7 @@ public class IndexController {
 
     @RequestMapping(value = {"/","index"})
     public String toIndex(@RequestParam(value = "page",defaultValue = "1") Integer page,
-                          @RequestParam(value = "pageSize",defaultValue = "8")Integer pageSize,
+                          @RequestParam(value = "pageSize",defaultValue = "5")Integer pageSize,
                           @RequestParam(value = "keyWord",defaultValue = "") String keyWord,
                             HttpServletRequest request,
                           Model model){

@@ -134,7 +134,7 @@
             num_edge_entries: 1,    //边缘页数
             num_display_entries: 4,   //主题页数
             callback:pageselectCallback,  //回调函数
-            items_per_page:8,              //每页显示条数
+            items_per_page:5,              //每页显示条数
             current_page: currentPage,
             prev_text: "上一页",
             next_text: "下一页"
@@ -145,7 +145,7 @@
 
     function pageselectCallback(pageIndex,jq){
         var currentPage = parseInt(pageIndex)+1;
-        window.location.href="/index?page="+currentPage+"&pageSize="+8;
+        window.location.href="/index?page="+currentPage+"&pageSize="+5;
         return false;
     }
 </script>
