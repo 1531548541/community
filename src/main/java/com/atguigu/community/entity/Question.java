@@ -1,6 +1,8 @@
 package com.atguigu.community.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+
 
 @Data
 public class Question {
@@ -14,4 +16,7 @@ public class Question {
     private Integer likeCount;
     private String tag;
     private String description;
+
+    @TableField(exist = false)
+    private User user;
 }
