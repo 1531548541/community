@@ -27,7 +27,7 @@ function comment2target(targetId, type, content) {
             "type": type
         }),
         success: function (response) {
-            if (response.code == 200) {
+            if (response.retcode == "000000") {
                 window.location.reload();
             } else {
                 if (response.code == 2003) {

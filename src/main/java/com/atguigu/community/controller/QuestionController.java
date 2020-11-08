@@ -1,9 +1,14 @@
 package com.atguigu.community.controller;
 
+import com.atguigu.community.entity.Comment;
 import com.atguigu.community.entity.Question;
 import com.atguigu.community.entity.User;
+import com.atguigu.community.enums.CommentTypeEnum;
+import com.atguigu.community.mapper.QuestionMapper;
+import com.atguigu.community.service.CommentService;
 import com.atguigu.community.service.QuestionService;
 import com.atguigu.community.service.UserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +29,9 @@ public class QuestionController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CommentService commentService;
+
 //    @Autowired
 //    private CommentService commentService;
 
@@ -40,10 +48,11 @@ public class QuestionController {
         question.setUser(user);
 //        List<Question> relatedQuestions = questionService.selectRelated(questionDTO);
 //        List<Question> comments = commentService.listByTargetId(questionId, CommentTypeEnum.QUESTION);
+        List<Comment> comments = commentService.findAll(questionId, CommentTypeEnum.QUESTION);
         //累加阅读数
-//        questionService.incView(questionId);
+        questionService.incView(questionId);
         model.addAttribute("question", question);
-//        model.addAttribute("comments", comments);
+        model.addAttribute("comments", comments);
 //        model.addAttribute("relatedQuestions", relatedQuestions);
         return "question";
     }
