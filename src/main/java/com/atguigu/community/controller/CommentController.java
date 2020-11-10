@@ -4,6 +4,7 @@ import com.atguigu.community.dto.CommentCreateDTO;
 import com.atguigu.community.dto.R;
 import com.atguigu.community.entity.Comment;
 import com.atguigu.community.entity.User;
+import com.atguigu.community.enums.CommentTypeEnum;
 import com.atguigu.community.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -43,10 +45,10 @@ public class CommentController {
         return R.ok();
     }
 
-//    @ResponseBody
-//    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
-//    public ResultDTO<List<CommentDTO>> comments(@PathVariable(name = "id") Long id) {
-//        List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
-//        return ResultDTO.okOf(commentDTOS);
-//    }
+    @ResponseBody
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    public R comments(@PathVariable(name = "id") Long id) {
+        List<Comment> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
+        return R.ok(commentDTOS);
+    }
 }

@@ -95,4 +95,33 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         return commentDTOS;
     }
+
+    @Override
+    public List<Comment> listByTargetId(Long id, CommentTypeEnum type) {
+        QueryWrapper<Comment> commentQueryWrapper=new QueryWrapper<>();
+        commentQueryWrapper.eq("parent_id",id);
+        commentQueryWrapper.eq("type",type.getType());
+        commentQueryWrapper.orderByDesc("gmt_create");
+        List<Comment> comments = commentMapper.selectList(commentQueryWrapper);
+        if (comments.size() == 0) {
+            return new ArrayList<>();
+        }
+        // 获取去重的评论人
+        Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
+        List<Long> userIds = new ArrayList();
+        userIds.addAll(commentators);
+
+        // 获取评论人并转换为 Map
+        List<User> users = userMapper.selectBatchIds(userIds);
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
+
+
+        // 转换 comment 为 commentDTO
+        List<Comment> commentDTOS = comments.stream().map(comment -> {
+            comment.setUser(userMap.get(comment.getCommentator()));
+            return comment;
+        }).collect(Collectors.toList());
+
+        return commentDTOS;
+    }
 }

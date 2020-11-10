@@ -11,4 +11,6 @@ public interface CommentService extends IService<Comment> {
     void addComment(Comment comment, User user);
 
     List<Comment> findAll(Long questionId, CommentTypeEnum question);
+
+    List<Comment> listByTargetId(Long id, CommentTypeEnum comment);
 }
