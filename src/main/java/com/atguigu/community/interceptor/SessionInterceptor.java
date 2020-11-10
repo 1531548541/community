@@ -1,6 +1,7 @@
 package com.atguigu.community.interceptor;
 
 import com.atguigu.community.entity.User;
+import com.atguigu.community.service.NotificationService;
 import com.atguigu.community.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,9 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserService userService;
-//    @Autowired
-//    private NotificationService notificationService;
+
+    @Autowired
+    private NotificationService notificationService;
 //    @Autowired
 //    private AdService adService;
 
@@ -51,8 +53,8 @@ public class SessionInterceptor implements HandlerInterceptor {
                     if (user != null) {
                         HttpSession session = request.getSession();
                         session.setAttribute("user", user);
-//                        Long unreadCount = notificationService.unreadCount(user.getId());
-//                        session.setAttribute("unreadCount", unreadCount);
+                        Integer unreadCount = notificationService.unreadCount(user.getId());
+                        session.setAttribute("unreadCount", unreadCount);
                     }
                     break;
                 }

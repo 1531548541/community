@@ -1,10 +1,14 @@
 package com.atguigu.community.service.impl;
 
 import com.atguigu.community.entity.Comment;
+import com.atguigu.community.entity.Notification;
 import com.atguigu.community.entity.Question;
 import com.atguigu.community.entity.User;
 import com.atguigu.community.enums.CommentTypeEnum;
+import com.atguigu.community.enums.NotificationStatusEnum;
+import com.atguigu.community.enums.NotificationTypeEnum;
 import com.atguigu.community.mapper.CommentMapper;
+import com.atguigu.community.mapper.NotificationMapper;
 import com.atguigu.community.mapper.QuestionMapper;
 import com.atguigu.community.mapper.UserMapper;
 import com.atguigu.community.service.CommentService;
@@ -34,6 +38,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private NotificationMapper notificationMapper;
+
     @Override
     public void addComment(Comment comment, User user) {
         if (CommentTypeEnum.COMMENT.getType().equals(comment.getType())) {
@@ -50,7 +57,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                     parentComment.setCommentCount(1);
                     commentMapper.incCommentCount(parentComment);
                     // 创建通知
-//                    createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
+                    createNotify(comment, dbComment.getCommentator(), user.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
                 }
             }
         } else {
@@ -62,9 +69,26 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 question.setCommentCount(1);
                 questionMapper.updateById(question);
                 // 创建通知
-//                createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
+                createNotify(comment, question.getCreator(), user.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
             }
         }
+    }
+
+    //创建通知
+    private void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
+//        if (receiver.equals(comment.getCommentator())) {
+//            return;
+//        }
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setType(notificationType.getType());
+        notification.setOuterid(outerId);
+        notification.setNotifier(comment.getCommentator());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setReceiver(receiver);
+        notification.setNotifierName(notifierName);
+        notification.setOuterTitle(outerTitle);
+        notificationMapper.insert(notification);
     }
 
     @Override
