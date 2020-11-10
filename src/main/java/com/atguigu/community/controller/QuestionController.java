@@ -46,14 +46,13 @@ public class QuestionController {
         Question question = questionService.getById(questionId);
         User user = userService.getById(question.getCreator());
         question.setUser(user);
-//        List<Question> relatedQuestions = questionService.selectRelated(questionDTO);
-//        List<Question> comments = commentService.listByTargetId(questionId, CommentTypeEnum.QUESTION);
+        List<Question> relatedQuestions = questionService.selectRelated(question);
         List<Comment> comments = commentService.findAll(questionId, CommentTypeEnum.QUESTION);
         //累加阅读数
         questionService.incView(questionId);
         model.addAttribute("question", question);
         model.addAttribute("comments", comments);
-//        model.addAttribute("relatedQuestions", relatedQuestions);
+        model.addAttribute("relatedQuestions", relatedQuestions);
         return "question";
     }
 }
